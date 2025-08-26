@@ -12,8 +12,8 @@ def download_file(url, local_path):
             f.write(r.content)
 
 # Add your Google Drive direct download links here
-download_file("https://drive.google.com/file/d/1iZgQtPZrNLXRoiGHMgoU2qlgTU4grih3/view?usp=drive_link", "movie_dict.pkl")
-download_file("https://drive.google.com/file/d/1MnDzYKeaHJw-mdyon-b_mdqZsew9gmaV/view?usp=drive_link", "similarity.pkl")
+download_file("https://drive.google.com/uc?export=download&id=1iZgQtPZrNLXRoiGHMgoU2qlgTU4grih3", "movie_dict.pkl")
+download_file("https://drive.google.com/uc?export=download&id=1MnDzYKeaHJw-mdyon-b_mdqZsew9gmaV", "similarity.pkl")
 
 # Load files
 with open('movie_dict.pkl', 'rb') as f:
