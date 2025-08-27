@@ -4,42 +4,36 @@ import pandas as pd
 import requests
 import os
 
-# Download from Google Drive (handles large files)
-def download_file_from_google_drive(file_id, destination):
+# Download from Hugging Face Datasets
+def download_from_hf(url, destination):
     if os.path.exists(destination):
-        return
+        return  # Skip if already downloaded
 
-    URL = "https://docs.google.com/uc?export=download"
-    session = requests.Session()
-    response = session.get(URL, params={'id': file_id}, stream=True)
-
-    token = None
-    for key, value in response.cookies.items():
-        if key.startswith('download_warning'):
-            token = value
-
-    if token:
-        response = session.get(URL, params={'id': file_id, 'confirm': token}, stream=True)
+    response = requests.get(url, stream=True)
+    response.raise_for_status()  # Raise error if download failed
 
     with open(destination, "wb") as f:
-        for chunk in response.iter_content(32768):
-            if chunk:
-                f.write(chunk)
+        for chunk in response.iter_content(8192):
+            f.write(chunk)
 
-# Add your Google Drive file IDs
-download_file_from_google_drive("1iZgQtPZrNLXRoiGHMgoU2qlgTU4grih3", "movie_dict.pkl")
-download_file_from_google_drive("1MnDzYKeaHJw-mdyon-b_mdqZsew9gmaV", "similarity.pkl")
+# Your Hugging Face dataset repo (replace with your actual username/repo if different)
+BASE_URL = "https://huggingface.co/datasets/Ashraful52038/movie-recommendation-files/resolve/main/"
 
-# Load files
-with open('movie_dict.pkl', 'rb') as f:
+download_from_hf(BASE_URL + "movie_dict.pkl", "movie_dict.pkl")
+download_from_hf(BASE_URL + "similarity.pkl", "similarity.pkl")
+
+# Load files safely
+with open("movie_dict.pkl", "rb") as f:
     movies_dict = pickle.load(f)
 movies = pd.DataFrame(movies_dict)
 
-with open('similarity.pkl', 'rb') as f:
+with open("similarity.pkl", "rb") as f:
     similarity = pickle.load(f)
 
 def fetch_poster(movie_id):
-    response = requests.get(f'https://api.themoviedb.org/3/movie/{movie_id}?api_key=267fdd6ab0dfe7bee4813dd75e6f979b')
+    response = requests.get(
+        f"https://api.themoviedb.org/3/movie/{movie_id}?api_key=267fdd6ab0dfe7bee4813dd75e6f979b"
+    )
     data = response.json()
     return f"https://image.tmdb.org/t/p/w500{data['poster_path']}"
 
@@ -59,7 +53,7 @@ def recommend(movie):
 
 # Streamlit UI
 st.title("Movie Recommendation System")
-selected_movie_name = st.selectbox('Choose your movie?', movies['title'].values)
+selected_movie_name = st.selectbox("Choose your movie?", movies["title"].values)
 
 if st.button("Recommend"):
     names, posters = recommend(selected_movie_name)
