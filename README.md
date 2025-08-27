@@ -63,6 +63,8 @@ API_KEY = "267fdd6ab0dfe7bee4813dd75e6f979b"
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/21d41dd3-210a-4725-a53c-6678cc650897" />
 
 
+
+
 🤝 Contributing
 Pull requests are welcome! For major changes, please open an issue first to discuss what you’d like to change.
 
